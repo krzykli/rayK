@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #include "Raytracer.h"
 #include "Camera.h"
@@ -16,9 +17,7 @@ vec3 Raytracer::Trace(Ray & r, std::vector<Light> & lightList, Scene & scene, in
     if (depth >= m_rayDepth) {
         return color;
     }
-	if (scene.hit(r, 0.00001, FLT_MAX, rec)) {
-        
-        
+    if (scene.hit(r, 0.00001, FLT_MAX, rec)) {
         if (rec.pMat == NULL) {
             return vec3(0, 0, 0);
         }
@@ -27,12 +26,12 @@ vec3 Raytracer::Trace(Ray & r, std::vector<Light> & lightList, Scene & scene, in
             Light lgt = *it;
             vec3 lightPos = lgt.GetPosition();
             float distToLight = (lightPos - rec.p).length();
-            float dota = dot(rec.normal, normalize(lightPos - rec.p));
+            float dota = vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p));
             vec3 diffuseColor = rec.pMat->diffuse;
 
-            vec3 dirToCamera = -normalize(r.GetDirection());
-            vec3 dirToLight = normalize(lightPos - rec.p);
-            vec3 halfVector = normalize(dirToCamera + dirToLight);
+            vec3 dirToCamera = -vec3::normalize(r.GetDirection());
+            vec3 dirToLight = vec3::normalize(lightPos - rec.p);
+            vec3 halfVector = vec3::normalize(dirToCamera + dirToLight);
 
             float specularity = 0.6;
             float shininess = 80;
@@ -43,8 +42,8 @@ vec3 Raytracer::Trace(Ray & r, std::vector<Light> & lightList, Scene & scene, in
             }
             else {
                 vec3 shadingModel = (lgt.GetIntensity() / pow(distToLight, lgt.GetAttenuation()) *
-                    diffuseColor * max(dot(rec.normal, normalize(lightPos - rec.p)), 0.f) * lgt.GetColor() +
-                    specularity * pow(max(dot(rec.normal, halfVector), 0.f), shininess));
+                    diffuseColor * std::max(vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p)), 0.f) * lgt.GetColor() +
+                    specularity * pow(std::max(vec3::dot(rec.normal, halfVector), 0.f), shininess));
                 color += shadingModel;
             }
 
@@ -54,9 +53,9 @@ vec3 Raytracer::Trace(Ray & r, std::vector<Light> & lightList, Scene & scene, in
             }
         }
 
-        return min(color, vec3(1));
-	}
-    float v = 0.5 * (normalize(r.GetDirection()).y + 1);
+        return vec3::min(color, vec3(1));
+    }
+    float v = 0.5 * (vec3::normalize(r.GetDirection()).y + 1);
     return vec3(v, v, v);
 }
 
@@ -69,10 +68,10 @@ void writeBucketToFile(std::ofstream & fileHandler, vec3 arr[], int arrSize) {
 
 void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & scene, const std::string & filename)
 {
-	clock_t begin = clock();
+    clock_t begin = clock();
 
-	std::ofstream outputFile;
-	outputFile.open(filename);
+    std::ofstream outputFile;
+    outputFile.open(filename);
 
     const int bucketSize = 5024;
     vec3 bufferedPixels[bucketSize];
@@ -81,15 +80,14 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
     float width = m_renderResolution[0];
     float height = m_renderResolution[1];
 
-	outputFile << "P3\n" << width << " " << height << "\n255\n";
+    outputFile << "P3\n" << width << " " << height << "\n255\n";
 
 
-	for (int j = height - 1; j >= 0; j--) {
-		for (int i = 0; i < width; i++) {
+    for (int j = height - 1; j >= 0; j--) {
+        for (int i = 0; i < width; i++) {
 
             vec3 color = vec3(0, 0, 0);
 
-            
             if (m_aaSamples > 1) {
                 for (int s = 0; s < m_aaSamples; s++)
                 {
@@ -110,9 +108,9 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
                 color = Trace(r, lightList, scene, 0);
             }
 
-			int red = int(color[0] * 255.99);
-			int green = int(color[1] * 255.99);
-			int blue = int(color[2] * 255.99);
+            int red = int(color[0] * 255.99);
+            int green = int(color[1] * 255.99);
+            int blue = int(color[2] * 255.99);
 
             bufferedPixels[pixelNumber] = vec3(red, green, blue);
             pixelNumber++;
@@ -121,20 +119,20 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
                 writeBucketToFile(outputFile, bufferedPixels, bucketSize);
                 pixelNumber = 0;
             }
-		}
-	}
+        }
+    }
     // Flush the rest
     if (pixelNumber != 0) {
         writeBucketToFile(outputFile, bufferedPixels, pixelNumber);
     }
 
-	outputFile.close();
-	clock_t end = clock();
+    outputFile.close();
+    clock_t end = clock();
 
-	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-	std::ostringstream oss;
-	oss << "Elapsed time : " << elapsed_secs << "s";
-	debug_log(oss.str());
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::ostringstream oss;
+    oss << "Elapsed time : " << elapsed_secs << "s";
+    debug_log(oss.str());
 }
 
 void Raytracer::SetResolution(float res[2])

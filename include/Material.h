@@ -1,7 +1,6 @@
 #pragma once
-#include "glm\glm.hpp"
+#include "vec3.h"
 
-using namespace glm;
 
 struct hit_record;
 class Ray;

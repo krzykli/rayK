@@ -6,3 +6,4 @@
 
 // TODO: reference any additional headers you need in STDAFX.H
 // and not in this file
+#define randf static_cast <float> (rand()) / static_cast <float> (RAND_MAX)

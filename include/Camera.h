@@ -1,9 +1,7 @@
 #pragma once
-#include "glm\glm.hpp"
+#include "vec3.h"
 #include "Object3d.h"
 #include "Ray.h"
-
-using namespace glm;
 
 class Camera : public Object3d
 {

@@ -1,8 +1,6 @@
 #pragma once
-#include "glm\glm.hpp"
+#include "vec3.h"
 #include "Object3d.h"
-
-using namespace glm;
 
 class Light: public Object3d
 {

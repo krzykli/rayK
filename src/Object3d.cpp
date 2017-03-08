@@ -7,25 +7,14 @@ Object3d::Object3d() :
     m_name("Object"),
     m_pParent(NULL),
     m_children(NULL),
-    m_transform(Transformation()),
     m_pMat(NULL)
 {
-    
 }
 
 Object3d::~Object3d()
 {
 }
 
-void Object3d::SetTransform(Transformation & in_transform) 
-{
-    m_transform = in_transform;
-}
-
-const Transformation & Object3d::GetTransform() const 
-{
-    return m_transform;
-}
 
 void Object3d::SetParent(Object3d * in_pParent)
 {

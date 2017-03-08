@@ -1,8 +1,8 @@
-#include "stdafx.h" 
+#include "stdafx.h"
 #include "Lambert.h"
 #include "Ray.h"
 #include "IHitable.h"
-#include "glm\glm.hpp"
+#include "vec3.h"
 
 
 vec3 random_in_unit_sphere() {
@@ -12,7 +12,7 @@ vec3 random_in_unit_sphere() {
 }
 
 vec3 reflect(const vec3& v, const vec3& n) {
-    return v - 2 * dot(v, n) * n;
+    return v - 2 * vec3::dot(v, n) * n;
 }
 
 Lambert::Lambert() {
@@ -22,8 +22,8 @@ Lambert::Lambert() {
 bool Lambert::scatter(const Ray& ray, const hit_record& rec, Ray & bounce) const 
 {
     vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-    vec3 reflected = reflect(normalize(ray.GetDirection()), rec.normal);
+    vec3 reflected = reflect(vec3::normalize(ray.GetDirection()), rec.normal);
     //bounce = Ray(rec.p, reflected);
     bounce = Ray(rec.p, reflected + vec3(0.5) * random_in_unit_sphere());
-    return (dot(bounce.GetDirection(), rec.normal) > 0);
+    return (vec3::dot(bounce.GetDirection(), rec.normal) > 0);
 }

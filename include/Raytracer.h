@@ -26,6 +26,5 @@ private:
     float m_renderResolution[2] = { 512.0, 512.0 };
     int m_aaSamples = 0;
     int m_rayDepth = 5;
-    
 };
 

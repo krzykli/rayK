@@ -1,11 +1,9 @@
 #pragma once
 #include <stack>
 #include <list>
-#include "glm\glm.hpp"
-#include "Transformation.h"
+#include "vec3.h"
 #include "Lambert.h"
 
-using namespace glm;
 class Material;
 
 class Object3d
@@ -14,10 +12,6 @@ public:
     Object3d();
 
     virtual ~Object3d();
-
-    const Transformation & GetTransform() const;
-
-    void SetTransform(Transformation & in_transform);
 
     void SetParent(Object3d *parent);
 
@@ -50,6 +44,5 @@ private:
     std::string m_name;
     std::list<Object3d *> m_children;
     Material * m_pMat;
-    Transformation m_transform;
 };
 

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TRIANGLEH
+#define TRIANGLEH
 #include "IHitable.h"
 #include "Object3d.h"
 
@@ -10,3 +11,4 @@ public:
 
     vec3 m_verts[3], m_A, m_B, m_C, m_normal;
 };
+#endif // TRIANGLEH
