@@ -15,6 +15,7 @@
 
 int main()
 {
+
     debug_log("Start");
     // Create scene root
     Scene sceneRoot = Scene();
@@ -23,35 +24,21 @@ int main()
     Raytracer renderer = Raytracer();
     float res[2] = { 600, 400 };
     renderer.SetResolution(res);
-    renderer.SetAASamples(32);
+    renderer.SetAASamples(2);
 
     const std::string outputFile = "C:\\Users\\krzykli\\kRay.ppm";
 
     // Create render camera
-    Camera * cam = new Camera(vec3(-2, 3, 5), vec3(0, 0, 0), vec3(0, 1, 0), 50, res[0]/res[1], 3.5);
+    Camera * cam = new Camera(vec3(-2, 3, 5), vec3(0, 0, 0),
+                              vec3(0, 1, 0), 50, res[0]/res[1], 3.5);
     cam -> SetName("Camera1");
     std::vector<Light> lightList;
 
- /*   std::vector<Object3d *> objects = readfile("C:\\Users\\krzykli\\ComputerGraphics\\raytracer\\hw3-submissionscenes\\smallTest.test");
-
-    for (std::vector<Object3d *>::iterator it = objects.begin(); it != objects.end(); it++)
-    {s
-        sceneRoot.AddObject(*it);
-
-        if (Camera* c = dynamic_cast<Camera*>(*it)) {
-            cam = dynamic_cast<Camera*>(*it);
-        }
-
-        if (Light* lgt = dynamic_cast<Light*>(*it)) {
-            lgt = dynamic_cast<Light*>(*it);
-            lightList.push_back(*lgt);
-        }
-
-    }*/
-
     // Create geometry
     Sphere sphr(1);
+    sphr.position = vec3(0, 0.5, 1);
     Sphere sphr2(1);
+    sphr2.position = vec3(-1, 0.5, -2);
 
     Triangle tri(vec3(0, 1, 0), vec3(1.5, 0, 0), vec3(0, 0, 1));
     Triangle tri2(vec3(0, -1, -0.2), vec3(-0.5, 0.3, 0), vec3(0, 0, 0));
@@ -59,10 +46,12 @@ int main()
 
     // Create lights
     Light lgt1 = Light();
-    lgt1.SetColor(vec3(1, 0, 0));
+    lgt1.SetColor(vec3(2, 6, 5));
+    lgt1.SetPosition(vec3(3, 3, 3));
 
     Light lgt2 = Light();
-    lgt2.SetColor(vec3(0, 1, 0));
+    lgt2.SetColor(vec3(-2, 5, 0));
+    lgt1.SetPosition(vec3(-3, 3, 3));
 
     lightList.push_back(lgt1);
     lightList.push_back(lgt2);

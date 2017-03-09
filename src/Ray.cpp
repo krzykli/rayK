@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "Ray.h"
 
-Ray::Ray(const vec3 & origin, const vec3 & direction) :
+Ray::Ray(const vec3& origin, const vec3& direction) :
     m_origin(origin),
     m_direction(direction)
 {}

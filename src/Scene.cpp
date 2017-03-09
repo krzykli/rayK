@@ -8,9 +8,9 @@ bool Scene::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) con
     double closest_so_far = t_max;
     for (int i = 0; i < GetChildrenNumber(); i++)
     {
-        if (IHitable * hitable = dynamic_cast<IHitable *>(m_flatObjList[i])) 
+        if (IHitable * hitable = dynamic_cast<IHitable *>(m_flatObjList[i]))
         {
-            if (hitable->hit(ray, t_min, closest_so_far, temp_rec)) 
+            if (hitable->hit(ray, t_min, closest_so_far, temp_rec))
             {
                 hit_anything = true;
                 closest_so_far = temp_rec.t;

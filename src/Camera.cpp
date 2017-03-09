@@ -38,7 +38,7 @@ Ray Camera::GetRay(float s, float t) const
 {
     // aperature
     vec3 rd = vec3(0.5) * random_in_unit_disc();
-    vec3 offset = u * rd.x + v * rd.y;
+    vec3 offset = u * rd.x() + v * rd.y();
     return Ray(m_Pos + offset, m_TopLeftCorner + s * m_HorizontalVector + t * m_VerticalVector - m_Pos - offset);
 }
 

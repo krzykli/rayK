@@ -9,7 +9,8 @@
 #include "Sphere.h"
 #include "Scene.h"
 
-vec3 Raytracer::Trace(Ray & r, std::vector<Light> & lightList, Scene & scene, int depth)
+vec3 Raytracer::Trace(
+    Ray & r, std::vector<Light> & lightList, Scene & scene, int depth)
 {
     vec3 color = vec3(0, 0, 0);
     hit_record rec;
@@ -55,14 +56,15 @@ vec3 Raytracer::Trace(Ray & r, std::vector<Light> & lightList, Scene & scene, in
 
         return vec3::min(color, vec3(1));
     }
-    float v = 0.5 * (vec3::normalize(r.GetDirection()).y + 1);
+    float v = 0.5 * (vec3::normalize(r.GetDirection()).y() + 1);
     return vec3(v, v, v);
 }
+
 
 void writeBucketToFile(std::ofstream & fileHandler, vec3 arr[], int arrSize) {
     for (int i = 0; i < arrSize; i++)
     {
-        fileHandler << arr[i].x << " " << arr[i].y << " " << arr[i].z << "\n";
+        fileHandler << arr[i].x() << " " << arr[i].y() << " " << arr[i].z() << "\n";
     }
 }
 
@@ -81,7 +83,6 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
     float height = m_renderResolution[1];
 
     outputFile << "P3\n" << width << " " << height << "\n255\n";
-
 
     for (int j = height - 1; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
