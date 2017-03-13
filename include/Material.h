@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MATERIALH
+#define MATERIALH
+
 #include "vec3.h"
 
 
@@ -15,3 +17,5 @@ public:
     vec3 ambient;
     vec3 emission;
 };
+
+#endif // MATERIALH

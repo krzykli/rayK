@@ -1,4 +1,6 @@
-#pragma once
+#ifndef OBJECT3DH
+#define OBJECT3DH
+
 #include <stack>
 #include <list>
 #include "vec3.h"
@@ -46,3 +48,4 @@ private:
     Material * m_pMat;
 };
 
+#endif // OBJECT3DH

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SPHEREH
+#define SPHEREH
+
 #include "IHitable.h"
 #include "Object3d.h"
 #include "Lambert.h"
@@ -13,3 +15,5 @@ public:
     float m_radius;
     vec3 position;
 };
+
+#endif // SPHEREH

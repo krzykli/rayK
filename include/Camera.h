@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CAMERAH
+#define CAMERAH
+
 #include "vec3.h"
 #include "Object3d.h"
 #include "Ray.h"
@@ -25,3 +27,4 @@ private:
     vec3 u, v, w;
 };
 
+#endif // CAMERAH

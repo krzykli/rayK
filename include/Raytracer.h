@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RAYTRACERH
+#define RAYTRACERH
+
 #include "Ray.h"
 #include "Camera.h"
 #include "IHitable.h"
@@ -29,3 +31,4 @@ private:
     int m_rayDepth = 5;
 };
 
+#endif // RAYTRACERH

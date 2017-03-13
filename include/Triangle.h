@@ -1,5 +1,6 @@
 #ifndef TRIANGLEH
 #define TRIANGLEH
+
 #include "IHitable.h"
 #include "Object3d.h"
 

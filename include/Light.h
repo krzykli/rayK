@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LIGHTH
+#define LIGHTH
+
 #include "vec3.h"
 #include "Object3d.h"
 
@@ -27,3 +29,4 @@ public:
 
 };
 
+#endif // LIGHTH
