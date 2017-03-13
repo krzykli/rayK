@@ -10,7 +10,7 @@
 #include "Scene.h"
 
 vec3 Raytracer::Trace(
-    Ray & r, std::vector<Light> & lightList, Scene & scene, int depth)
+    Ray& r, std::vector<Light>& lightList, Scene& scene, int depth)
 {
     vec3 color = vec3(0, 0, 0);
     hit_record rec;

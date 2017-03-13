@@ -6,7 +6,7 @@ Light::Light() :
     m_position(vec3(0, 0, 0)),
     m_color(vec3(1, 1, 1)),
     m_attenuation(2.0),
-    m_intensity(5.0)
+    m_intensity(6.0)
 {
 }
 

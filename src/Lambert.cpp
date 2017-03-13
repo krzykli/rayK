@@ -19,7 +19,7 @@ Lambert::Lambert() {
     diffuse = vec3(0.7, 0.7, 0.7);
 }
 
-bool Lambert::scatter(const Ray& ray, const hit_record& rec, Ray & bounce) const 
+bool Lambert::scatter(const Ray& ray, const hit_record& rec, Ray& bounce) const
 {
     vec3 target = rec.p + rec.normal + random_in_unit_sphere();
     vec3 reflected = reflect(vec3::normalize(ray.GetDirection()), rec.normal);

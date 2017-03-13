@@ -11,11 +11,11 @@
 #include "Sphere.h"
 #include "Raytracer.h"
 #include "Triangle.h"
+#include <algorithm>
 #include "Lambert.h"
 
 int main()
 {
-
     debug_log("Start");
     // Create scene root
     Scene sceneRoot = Scene();
@@ -24,7 +24,7 @@ int main()
     Raytracer renderer = Raytracer();
     float res[2] = { 600, 400 };
     renderer.SetResolution(res);
-    renderer.SetAASamples(2);
+    renderer.SetAASamples(32);
 
     const std::string outputFile = "C:\\Users\\krzykli\\kRay.ppm";
 
@@ -46,12 +46,12 @@ int main()
 
     // Create lights
     Light lgt1 = Light();
-    lgt1.SetColor(vec3(2, 6, 5));
-    lgt1.SetPosition(vec3(3, 3, 3));
+    lgt1.SetPosition(vec3(2, 6, 5));
+    lgt1.SetColor(vec3(0, 1, 0));
 
     Light lgt2 = Light();
-    lgt2.SetColor(vec3(-2, 5, 0));
-    lgt1.SetPosition(vec3(-3, 3, 3));
+    lgt2.SetPosition(vec3(-2, 5, 0));
+    lgt2.SetColor(vec3(1, 0, 0));
 
     lightList.push_back(lgt1);
     lightList.push_back(lgt2);
@@ -59,8 +59,8 @@ int main()
     // Add objects to the scene
     sceneRoot.AddObject(&sphr);
     sceneRoot.AddObject(&sphr2);
-    //sceneRoot.AddObject(&tri);
-    //sceneRoot.AddObject(&tri2);
+    sceneRoot.AddObject(&tri);
+    sceneRoot.AddObject(&tri2);
     sceneRoot.AddObject(&plane);
 
     // Create and assign materials
