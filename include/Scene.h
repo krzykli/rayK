@@ -11,7 +11,7 @@ public:
 
     virtual bool hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const;
 
-    unsigned int GetChildrenNumber() const;
+    size_t GetChildrenNumber() const;
 
     void AddObject(Object3d * obj);
 

@@ -7,7 +7,7 @@
 
 vec3 random_in_unit_sphere() {
     vec3 p;
-    p = vec3(2.0) * vec3(randf, randf, randf) - vec3(1, 1, 1); //vector <-1.1>
+    p = vec3(2.0f) * vec3(randf, randf, randf) - vec3(1, 1, 1); //vector <-1.1>
     return p;
 }
 
@@ -16,7 +16,7 @@ vec3 reflect(const vec3& v, const vec3& n) {
 }
 
 Lambert::Lambert() {
-    diffuse = vec3(0.7, 0.7, 0.7);
+    diffuse = vec3(0.7f, 0.7f, 0.7f);
 }
 
 bool Lambert::scatter(const Ray& ray, const hit_record& rec, Ray& bounce) const

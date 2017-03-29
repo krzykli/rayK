@@ -60,7 +60,10 @@ struct vec3
 
     vec3& operator- ()
     {
-         return vec3(-v[0], -v[1], -v[2]);
+         v[0] = -v[0];
+         v[1] = -v[1];
+         v[2] = -v[2];
+         return *this;
     }
 
     vec3& operator*= (float s)
@@ -105,7 +108,7 @@ struct vec3
 
     static vec3 normalize(const vec3& v1)
     {
-        float a = 1.0 / sqrt(pow(v1[0], 2) + pow(v1[1], 2) + pow(v1[2], 2));
+        float a = 1.0f / sqrt(pow(v1[0], 2) + pow(v1[1], 2) + pow(v1[2], 2));
         return vec3(v1[0] * a, v1[1] * a, v1[2] * a);
     }
 

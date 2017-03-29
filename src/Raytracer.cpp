@@ -10,7 +10,7 @@
 #include "Scene.h"
 
 vec3 Raytracer::Trace(
-    Ray& r, std::vector<Light>& lightList, Scene& scene, int depth)
+    const Ray& r, std::vector<Light>& lightList, Scene& scene, int depth)
 {
     vec3 color = vec3(0, 0, 0);
     hit_record rec;
@@ -18,7 +18,7 @@ vec3 Raytracer::Trace(
     if (depth >= m_rayDepth) {
         return color;
     }
-    if (scene.hit(r, 0.00001, FLT_MAX, rec)) {
+    if (scene.hit(r, 0.00001f, FLT_MAX, rec)) {
         if (rec.pMat == NULL) {
             return vec3(0, 0, 0);
         }
@@ -27,18 +27,17 @@ vec3 Raytracer::Trace(
             Light lgt = *it;
             vec3 lightPos = lgt.GetPosition();
             float distToLight = (lightPos - rec.p).length();
-            float dota = vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p));
             vec3 diffuseColor = rec.pMat->diffuse;
 
             vec3 dirToCamera = -vec3::normalize(r.GetDirection());
             vec3 dirToLight = vec3::normalize(lightPos - rec.p);
             vec3 halfVector = vec3::normalize(dirToCamera + dirToLight);
 
-            float specularity = 0.6;
+            float specularity = 0.6f;
             float shininess = 80;
 
-            Ray shadowRay = Ray(rec.p, dirToLight + vec3(0.2) * vec3(randf, randf, randf));
-            if (scene.hit(shadowRay, 0.00001, FLT_MAX, rec)) {
+            Ray shadowRay = Ray(rec.p, dirToLight + vec3(0.2f) * vec3(randf, randf, randf));
+            if (scene.hit(shadowRay, 0.00001f, FLT_MAX, rec)) {
                 color += vec3(0, 0, 0);
             }
             else {
@@ -50,13 +49,13 @@ vec3 Raytracer::Trace(
 
             Ray bounce;
             if (rec.pMat->scatter(r, rec, bounce)) {
-                color += vec3(0.2) * Trace(bounce, lightList, scene, depth++);
+                color += vec3(0.2f) * Trace(bounce, lightList, scene, depth++);
             }
         }
 
         return vec3::min(color, vec3(1));
     }
-    float v = 0.5 * (vec3::normalize(r.GetDirection()).y() + 1);
+    float v = 0.5f * (vec3::normalize(r.GetDirection()).y() + 1);
     return vec3(v, v, v);
 }
 
@@ -79,8 +78,8 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
     vec3 bufferedPixels[bucketSize];
     int pixelNumber = 0;
 
-    float width = m_renderResolution[0];
-    float height = m_renderResolution[1];
+    int width = m_renderResolution[0];
+    int height = m_renderResolution[1];
 
     outputFile << "P3\n" << width << " " << height << "\n255\n";
 
@@ -136,19 +135,19 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
     debug_log(oss.str());
 }
 
-void Raytracer::SetResolution(float res[2])
+void Raytracer::SetResolution(int res[2])
 {
     m_renderResolution[0] = res[0];
     m_renderResolution[1] = res[1];
 }
 
 
-const float Raytracer::GetResolutionX() const
+const int Raytracer::GetResolutionX() const
 {
     return m_renderResolution[0];
 }
 
-const float Raytracer::GetResolutionY() const
+const int Raytracer::GetResolutionY() const
 {
     return m_renderResolution[1];
 }

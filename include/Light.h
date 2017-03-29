@@ -11,10 +11,10 @@ public:
     ~Light();
 
     const vec3 GetPosition() const;
-    void SetPosition(vec3 & p);
+    void SetPosition(const vec3 & p);
 
     const vec3 GetColor() const;
-    void SetColor(vec3 & c);
+    void SetColor(const vec3 & c);
 
     const float GetIntensity() const;
     void SetIntensity(float i);

@@ -14,7 +14,7 @@ Triangle::Triangle(vec3 verts[3])
     m_normal = -vec3::normalize(vec3::cross(m_B - m_A, m_C - m_A));
 }
 
-Triangle::Triangle(vec3 & a, vec3 & b, vec3 & c)
+Triangle::Triangle(const vec3 & a, const vec3 & b, const vec3 & c)
 {
     m_verts[0] = a;
     m_verts[1] = b;
@@ -26,7 +26,7 @@ Triangle::Triangle(vec3 & a, vec3 & b, vec3 & c)
 }
 
 
-bool Triangle::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const 
+bool Triangle::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const
 {
     float u, v, distance;
 
@@ -41,16 +41,16 @@ bool Triangle::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) 
     if (det > -EPSILON && det < EPSILON)
         return 0;
 
-    float inv_det = 1.0 / det;
+    float inv_det = 1.0f / det;
 
     vec3 rayToVert = ray.GetOrigin() - m_A;
     u = vec3::dot(rayToVert, rayCrossEdge) * inv_det;
-    if (u < 0.0 || u > 1.0)
+    if (u < 0.0f || u > 1.0f)
         return 0;
 
     vec3 qvec = vec3::cross(rayToVert, AB);
     v = vec3::dot(ray.GetDirection(), qvec) * inv_det;
-    if (v < 0.0 || u + v > 1.0)
+    if (v < 0.0f || u + v > 1.0f)
         return 0;
 
     distance = vec3::dot(AC, qvec) * inv_det;

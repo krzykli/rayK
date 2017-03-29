@@ -5,8 +5,8 @@
 Light::Light() :
     m_position(vec3(0, 0, 0)),
     m_color(vec3(1, 1, 1)),
-    m_attenuation(2.0),
-    m_intensity(6.0)
+    m_attenuation(2.0f),
+    m_intensity(6.0f)
 {
 }
 
@@ -20,7 +20,7 @@ const vec3 Light::GetPosition() const
     return m_position;
 }
 
-void Light::SetPosition(vec3 & p)
+void Light::SetPosition(const vec3 & p)
 {
     m_position = p;
 }
@@ -30,7 +30,7 @@ const vec3 Light::GetColor() const
     return m_color;
 }
 
-void Light::SetColor(vec3 & c)
+void Light::SetColor(const vec3 & c)
 {
     m_color = c;
 }

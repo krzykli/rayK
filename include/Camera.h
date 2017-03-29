@@ -8,7 +8,7 @@
 class Camera : public Object3d
 {
 public:
-    Camera(vec3 &pos, vec3 &lookAt, vec3 &upV, float fovy, float aspectRatio, float focus_dist);
+    Camera(const vec3 &pos, const vec3 &lookAt, const vec3 &upV, float fovy, float aspectRatio, float focus_dist);
 
     Ray GetRay(float u, float v) const;
 
@@ -18,6 +18,7 @@ private:
     vec3 m_Pos;
     vec3 m_LookAt;
     vec3 m_UpVector;
+    float aperature;
     float m_resX;
     float m_resY;
     vec3 m_TopLeftCorner;

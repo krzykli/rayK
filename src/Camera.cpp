@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include "math.h"
-#define M_PI 3.14159265358979323846  /* pi */
+#define M_PI 3.14159265358979323846f  /* pi */
 
 
 vec3 random_in_unit_disc() {
@@ -13,18 +13,19 @@ vec3 random_in_unit_disc() {
 }
 
 
-Camera::Camera(vec3 & pos, vec3 & lookAt, vec3 & upV, float fov, float aspectRatio, float focus_dist) :
+Camera::Camera(const vec3 & pos, const vec3 & lookAt, const vec3 & upV, float fov, float aspectRatio, float focus_dist) :
     m_Pos(pos),
     m_LookAt(lookAt),
     m_UpVector(upV),
-    m_Fov(fov)
+    m_Fov(fov),
+    aperature(0.f)
 {
     // Create coordinate frame
     w = vec3::normalize(m_Pos - m_LookAt);
     u = vec3::normalize(vec3::cross(m_UpVector, w));
     v = vec3::cross(w, u);
 
-    float theta = fov * M_PI / 180; // convert to radians
+    float theta = fov * M_PI / 180.0f; // convert to radians
     float half_height = tan(theta / 2);
     float half_width = aspectRatio * half_height;
 
@@ -37,7 +38,7 @@ Camera::Camera(vec3 & pos, vec3 & lookAt, vec3 & upV, float fov, float aspectRat
 Ray Camera::GetRay(float s, float t) const
 {
     // aperature
-    vec3 rd = vec3(0.5) * random_in_unit_disc();
+    vec3 rd = vec3(this->aperature) * random_in_unit_disc();
     vec3 offset = u * rd.x() + v * rd.y();
     return Ray(m_Pos + offset, m_TopLeftCorner + s * m_HorizontalVector + t * m_VerticalVector - m_Pos - offset);
 }

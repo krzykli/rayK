@@ -22,7 +22,7 @@ int main()
 
     // Render Settings
     Raytracer renderer = Raytracer();
-    float res[2] = { 600, 400 };
+    int res[2] = { 600, 400 };
     renderer.SetResolution(res);
     renderer.SetAASamples(32);
 
@@ -30,7 +30,7 @@ int main()
 
     // Create render camera
     Camera * cam = new Camera(vec3(-2, 3, 5), vec3(0, 0, 0),
-                              vec3(0, 1, 0), 50, res[0]/res[1], 3.5);
+                              vec3(0, 1, 0), 50, float(res[0]/res[1]), 3.5f);
     cam -> SetName("Camera1");
     std::vector<Light> lightList;
 
@@ -41,7 +41,7 @@ int main()
     sphr2.position = vec3(-1, 0.5, -2);
 
     Triangle tri(vec3(0, 1, 0), vec3(1.5, 0, 0), vec3(0, 0, 1));
-    Triangle tri2(vec3(0, -1, -0.2), vec3(-0.5, 0.3, 0), vec3(0, 0, 0));
+    Triangle tri2(vec3(0, -1, -0.2f), vec3(-0.5f, 0.3f, 0), vec3(0, 0, 0));
     Triangle plane(vec3(100, 0, 100), vec3(-100, 0, 0), vec3(-100, 0, -100));
 
     // Create lights

@@ -5,7 +5,7 @@
 bool Scene::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const {
     hit_record temp_rec;
     bool hit_anything = false;
-    double closest_so_far = t_max;
+    float closest_so_far = t_max;
     for (int i = 0; i < GetChildrenNumber(); i++)
     {
         if (IHitable * hitable = dynamic_cast<IHitable *>(m_flatObjList[i]))
@@ -21,7 +21,7 @@ bool Scene::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) con
     return hit_anything;
 }
 
-unsigned int Scene::GetChildrenNumber() const
+size_t Scene::GetChildrenNumber() const
 {
     return m_flatObjList.size();
 }
