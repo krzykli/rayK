@@ -18,8 +18,8 @@ public:
     vec3 PointAtDistance(float t) const;
 
 private:
-    vec3 m_origin;
-    vec3 m_direction;
+    vec3 origin;
+    vec3 direction;
 };
 
 #endif // RAYH

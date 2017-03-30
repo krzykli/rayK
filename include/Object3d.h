@@ -26,10 +26,10 @@ public:
     std::list<Object3d *> GetChildren() const;
 
     Material * GetMaterial() const {
-        return m_pMat;
+        return pMat;
     }
     void SetMaterial(Material * pMat) {
-        m_pMat = pMat;
+        pMat = pMat;
     }
 
 
@@ -40,12 +40,12 @@ private:
         POLYMESH,
         SUBDMESH,
         LIGHT,
-    } m_type;
+    } type;
 
-    Object3d * m_pParent;
-    std::string m_name;
-    std::list<Object3d *> m_children;
-    Material * m_pMat;
+    Object3d * pParent;
+    std::string name;
+    std::list<Object3d *> children;
+    Material * pMat;
 };
 
 #endif // OBJECT3DH

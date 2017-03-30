@@ -4,10 +4,10 @@
 #include "Logger.hpp"
 
 Object3d::Object3d() :
-    m_name("Object"),
-    m_pParent(NULL),
-    m_children(NULL),
-    m_pMat(NULL)
+    name("Object"),
+    pParent(NULL),
+    children(NULL),
+    pMat(NULL)
 {
 }
 
@@ -18,26 +18,26 @@ Object3d::~Object3d()
 
 void Object3d::SetParent(Object3d * in_pParent)
 {
-    m_pParent = in_pParent;
-    in_pParent->m_children.push_back(this);
+    pParent = in_pParent;
+    in_pParent->children.push_back(this);
 }
 
 Object3d const * Object3d::GetParent() const
 {
-    return m_pParent;
+    return pParent;
 }
 
 void Object3d::SetName(const std::string & in_name)
 {
-    m_name = in_name;
+    name = in_name;
 }
 
 const std::string & Object3d::GetName() const
 {
-    return m_name;
+    return name;
 }
 
 std::list<Object3d *> Object3d::GetChildren() const
 {
-    return m_children;
+    return children;
 }

@@ -16,7 +16,7 @@ public:
     void AddObject(Object3d * obj);
 
 private:
-    unsigned int m_objNumber;
-    std::vector<Object3d *> m_flatObjList;
+    unsigned int objNumber;
+    std::vector<Object3d *> flatObjList;
 };
 

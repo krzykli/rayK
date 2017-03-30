@@ -10,6 +10,6 @@ public:
     Triangle(vec3 verts[3]);
     virtual bool hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const;
 
-    vec3 m_verts[3], m_A, m_B, m_C, m_normal;
+    vec3 verts[3], A, B, C, normal;
 };
 #endif // TRIANGLEH

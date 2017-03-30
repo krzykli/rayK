@@ -3,10 +3,10 @@
 
 
 Light::Light() :
-    m_position(vec3(0, 0, 0)),
-    m_color(vec3(1, 1, 1)),
-    m_attenuation(2.0f),
-    m_intensity(6.0f)
+    position(vec3(0, 0, 0)),
+    color(vec3(1, 1, 1)),
+    attenuation(2.0f),
+    intensity(6.0f)
 {
 }
 
@@ -15,42 +15,3 @@ Light::~Light()
 {
 }
 
-const vec3 Light::GetPosition() const
-{
-    return m_position;
-}
-
-void Light::SetPosition(const vec3 & p)
-{
-    m_position = p;
-}
-
-const vec3 Light::GetColor() const
-{
-    return m_color;
-}
-
-void Light::SetColor(const vec3 & c)
-{
-    m_color = c;
-}
-
-const float Light::GetIntensity() const
-{
-    return m_intensity;
-}
-
-void Light::SetIntensity(float i)
-{
-    m_intensity = i;
-}
-
-const float Light::GetAttenuation() const
-{
-    return m_attenuation;
-}
-
-void Light::SetAttenuation(float a)
-{
-    m_attenuation = a;
-}

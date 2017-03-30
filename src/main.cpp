@@ -44,12 +44,12 @@ int main()
     Triangle plane(vec3(100, 0, 100), vec3(-100, 0, 0), vec3(-100, 0, -100));
 
     Light lgt1 = Light();
-    lgt1.SetPosition(vec3(2, 6, 5));
-    lgt1.SetColor(vec3(0, 1, 0));
+    lgt1.position = vec3(2, 6, 5);
+    lgt1.color = vec3(0, 1, 0);
 
     Light lgt2 = Light();
-    lgt2.SetPosition(vec3(-2, 5, 0));
-    lgt2.SetColor(vec3(1, 0, 0));
+    lgt2.position = vec3(-2, 5, 0);
+    lgt2.color = vec3(1, 0, 0);
 
     lightList.push_back(lgt1);
     lightList.push_back(lgt2);

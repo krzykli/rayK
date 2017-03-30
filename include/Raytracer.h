@@ -26,9 +26,9 @@ public:
 
 private:
     vec3 Trace(const Ray &r, std::vector<Light> & lightList, Scene &scene, int depth);
-    int m_renderResolution[2] = { 512, 512 };
-    int m_aaSamples = 0;
-    int m_rayDepth = 5;
+    int renderResolution[2] = { 512, 512 };
+    int aaSamples = 0;
+    int rayDepth = 5;
 };
 
 #endif // RAYTRACERH

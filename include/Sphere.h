@@ -9,10 +9,10 @@
 class Sphere : public Object3d, public IHitable {
 public:
     Sphere() {}
-    Sphere(float r) : m_radius(r) {}
+    Sphere(float r) : radius(r) {}
     virtual bool hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const;
 
-    float m_radius;
+    float radius;
     vec3 position;
 };
 

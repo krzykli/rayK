@@ -15,7 +15,7 @@ vec3 Raytracer::Trace(
     vec3 color = vec3(0, 0, 0);
     hit_record rec;
 
-    if (depth >= m_rayDepth) {
+    if (depth >= rayDepth) {
         return color;
     }
     if (scene.hit(r, 0.00001f, FLT_MAX, rec)) {
@@ -25,7 +25,7 @@ vec3 Raytracer::Trace(
 
         for (std::vector<Light>::iterator it = lightList.begin(); it != lightList.end(); ++it) {
             Light lgt = *it;
-            vec3 lightPos = lgt.GetPosition();
+            vec3 lightPos = lgt.position;
             float distToLight = (lightPos - rec.p).length();
             vec3 diffuseColor = rec.pMat->diffuse;
 
@@ -41,8 +41,8 @@ vec3 Raytracer::Trace(
                 color += vec3(0, 0, 0);
             }
             else {
-                vec3 shadingModel = (lgt.GetIntensity() / pow(distToLight, lgt.GetAttenuation()) *
-                    diffuseColor * std::max(vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p)), 0.f) * lgt.GetColor() +
+                vec3 shadingModel = (lgt.intensity / pow(distToLight, lgt.attenuation) *
+                    diffuseColor * std::max(vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p)), 0.f) * lgt.color +
                     specularity * pow(std::max(vec3::dot(rec.normal, halfVector), 0.f), shininess));
                 color += shadingModel;
             }
@@ -78,8 +78,8 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
     vec3 bufferedPixels[bucketSize];
     int pixelNumber = 0;
 
-    int width = m_renderResolution[0];
-    int height = m_renderResolution[1];
+    int width = renderResolution[0];
+    int height = renderResolution[1];
 
     outputFile << "P3\n" << width << " " << height << "\n255\n";
 
@@ -88,8 +88,8 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
 
             vec3 color = vec3(0, 0, 0);
 
-            if (m_aaSamples > 1) {
-                for (int s = 0; s < m_aaSamples; s++)
+            if (aaSamples > 1) {
+                for (int s = 0; s < aaSamples; s++)
                 {
                     // pixel centers + jitter
                     float u = float(i + randf) / float(width);
@@ -98,7 +98,7 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
                     Ray r = cam.GetRay(u, v);
                     color += Trace(r, lightList, scene, 0);
                 }
-                color /= float(m_aaSamples);
+                color /= float(aaSamples);
             }
             else {
                 float u = float(i) / float(width);
@@ -137,21 +137,21 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
 
 void Raytracer::SetResolution(int res[2])
 {
-    m_renderResolution[0] = res[0];
-    m_renderResolution[1] = res[1];
+    renderResolution[0] = res[0];
+    renderResolution[1] = res[1];
 }
 
 
 const int Raytracer::GetResolutionX() const
 {
-    return m_renderResolution[0];
+    return renderResolution[0];
 }
 
 const int Raytracer::GetResolutionY() const
 {
-    return m_renderResolution[1];
+    return renderResolution[1];
 }
 
 void Raytracer::SetAASamples(int samples) {
-    m_aaSamples = samples;
+    aaSamples = samples;
 }
