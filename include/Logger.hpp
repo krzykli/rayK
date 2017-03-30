@@ -1,5 +1,5 @@
 #ifndef LOGGERH
-#define LOHHERH
+#define LOGGERH
 
 #include <string>
 #include <iostream>

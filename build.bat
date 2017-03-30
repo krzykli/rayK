@@ -7,6 +7,6 @@ set CompilerFlags= /GS /GL /analyze- /W4 /Gy /Zc:wchar_t /Zi /Gm- /O2 /Zc:inline
 
 mkdir build
 pushd build
-cl %CompilerFlags% ..\src\*.cpp /I..\include /link /out:rayK.exe
+cl %CompilerFlags% ..\src\main.cpp /I..\include /link /out:rayK.exe
 popd
 
