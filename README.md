@@ -7,4 +7,4 @@ Current state:
 
 ![alt tag](https://cloud.githubusercontent.com/assets/6304331/23851396/7d7de934-0837-11e7-856b-91124ec988fe.jpg)
 
-Image render time:  34.233s, single-threaded, no optimizations
+Image render time:  23.664s, single-threaded, no optimizations
