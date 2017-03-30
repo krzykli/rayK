@@ -5,7 +5,7 @@
 #include "vec3.h"
 
 
-vec3 randoin_unit_sphere() {
+vec3 random_in_unit_sphere() {
     vec3 p;
     p = vec3(2.0f) * vec3(randf, randf, randf) - vec3(1, 1, 1); //vector <-1.1>
     return p;
@@ -21,9 +21,9 @@ Lambert::Lambert() {
 
 bool Lambert::scatter(const Ray& ray, const hit_record& rec, Ray& bounce) const
 {
-    vec3 target = rec.p + rec.normal + randoin_unit_sphere();
-    vec3 reflected = reflect(vec3::normalize(ray.GetDirection()), rec.normal);
+    vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+    vec3 reflected = reflect(vec3::normalize(ray.direction), rec.normal);
     //bounce = Ray(rec.p, reflected);
-    bounce = Ray(rec.p, reflected + vec3(0.5) * randoin_unit_sphere());
-    return (vec3::dot(bounce.GetDirection(), rec.normal) > 0);
+    bounce = Ray(rec.p, reflected + vec3(0.5) * random_in_unit_sphere());
+    return (vec3::dot(bounce.direction, rec.normal) > 0);
 }

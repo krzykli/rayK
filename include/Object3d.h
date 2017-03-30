@@ -6,11 +6,13 @@
 #include "vec3.h"
 #include "Lambert.h"
 
-class Material;
+struct Material;
 
 class Object3d
 {
 public:
+    Material * pMat;
+
     Object3d();
 
     virtual ~Object3d();
@@ -25,13 +27,6 @@ public:
 
     std::list<Object3d *> GetChildren() const;
 
-    Material * GetMaterial() const {
-        return pMat;
-    }
-    void SetMaterial(Material * pMat) {
-        pMat = pMat;
-    }
-
 
 private:
     enum Type {
@@ -45,7 +40,6 @@ private:
     Object3d * pParent;
     std::string name;
     std::list<Object3d *> children;
-    Material * pMat;
 };
 
 #endif // OBJECT3DH

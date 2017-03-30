@@ -6,14 +6,13 @@
 
 struct Light: public Object3d
 {
-    Light();
-    ~Light();
-
     vec3 position;
     vec3 color;
     float intensity;
     float attenuation;
 
+    Light();
+    ~Light();
 };
 
 #endif // LIGHTH

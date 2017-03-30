@@ -24,8 +24,9 @@ int main()
 
     Raytracer renderer = Raytracer();
     int res[2] = { 600, 400 };
-    renderer.SetResolution(res);
-    renderer.SetAASamples(32);
+    renderer.renderResolution[0] = res[0];
+    renderer.renderResolution[1] = res[1];
+    renderer.aaSamples = 32;
 
     const std::string outputFile = "C:\\Users\\krzykli\\kRay.ppm";
 
@@ -61,11 +62,11 @@ int main()
     sceneRoot.AddObject(&plane);
 
     Lambert mat = Lambert();
-    sphr.SetMaterial(&mat);
-    sphr2.SetMaterial(&mat);
-    tri.SetMaterial(&mat);
-    tri2.SetMaterial(&mat);
-    plane.SetMaterial(&mat);
+    sphr.pMat = &mat;
+    sphr2.pMat = &mat;
+    tri.pMat = &mat;
+    tri2.pMat = &mat;
+    plane.pMat = &mat;
 
     renderer.Render(*cam, lightList, sceneRoot, outputFile);
 

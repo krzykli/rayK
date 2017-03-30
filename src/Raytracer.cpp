@@ -29,7 +29,7 @@ vec3 Raytracer::Trace(
             float distToLight = (lightPos - rec.p).length();
             vec3 diffuseColor = rec.pMat->diffuse;
 
-            vec3 dirToCamera = -vec3::normalize(r.GetDirection());
+            vec3 dirToCamera = -vec3::normalize(r.direction);
             vec3 dirToLight = vec3::normalize(lightPos - rec.p);
             vec3 halfVector = vec3::normalize(dirToCamera + dirToLight);
 
@@ -55,7 +55,7 @@ vec3 Raytracer::Trace(
 
         return vec3::min(color, vec3(1));
     }
-    float v = 0.5f * (vec3::normalize(r.GetDirection()).y() + 1);
+    float v = 0.5f * (vec3::normalize(r.direction).y() + 1);
     return vec3(v, v, v);
 }
 
@@ -135,23 +135,3 @@ void Raytracer::Render(Camera & cam, std::vector<Light> & lightList, Scene & sce
     debug_log(oss.str());
 }
 
-void Raytracer::SetResolution(int res[2])
-{
-    renderResolution[0] = res[0];
-    renderResolution[1] = res[1];
-}
-
-
-const int Raytracer::GetResolutionX() const
-{
-    return renderResolution[0];
-}
-
-const int Raytracer::GetResolutionY() const
-{
-    return renderResolution[1];
-}
-
-void Raytracer::SetAASamples(int samples) {
-    aaSamples = samples;
-}

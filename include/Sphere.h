@@ -6,14 +6,14 @@
 #include "Lambert.h"
 #include "vec3.h"
 
-class Sphere : public Object3d, public IHitable {
-public:
+struct Sphere : public Object3d, public IHitable {
+    float radius;
+    vec3 position;
+
     Sphere() {}
     Sphere(float r) : radius(r) {}
     virtual bool hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const;
 
-    float radius;
-    vec3 position;
 };
 
 #endif // SPHEREH
