@@ -117,7 +117,7 @@ struct Raytracer {
     int rayDepth = 5;
 
     vec3 Raytracer::Trace(
-        const Ray& r, std::vector<Light>& lightList, Scene& scene, int depth)
+        const Ray& r, std::vector<Light*>& lightList, Scene& scene, int depth)
     {
         vec3 color = vec3(0, 0, 0);
         hit_record rec;
@@ -130,8 +130,8 @@ struct Raytracer {
                 return vec3(0, 0, 0);
             }
 
-            for (std::vector<Light>::iterator it = lightList.begin(); it != lightList.end(); ++it) {
-                Light lgt = *it;
+            for (std::vector<Light*>::iterator it = lightList.begin(); it != lightList.end(); ++it) {
+                Light lgt = **it;
                 vec3 lightPos = lgt.position;
                 float distToLight = (lightPos - rec.p).length();
                 vec3 diffuseColor = rec.pMat->diffuse;
@@ -167,9 +167,9 @@ struct Raytracer {
     }
 
     void Raytracer::Render(
-            Camera & cam,
-            std::vector<Light> & lightList,
-            Scene & scene,
+            Camera &cam,
+            std::vector<Light*> & lightList,
+            Scene &scene,
             win32_offscreen_buffer *Buffer)
     {
         clock_t begin = clock();
@@ -211,36 +211,54 @@ struct Raytracer {
 
             HWND windowHandle = GetActiveWindow();
             HDC deviceContextHandle = GetDC(windowHandle);
+            win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
+            Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
+                                       Dimension.Width, Dimension.Height);
+            //TODO: make this text show
             RECT textRect;
             textRect.right = 300;
             textRect.left= 100;
             textRect.top = 100;
             textRect.bottom = 100;
             SetTextColor(deviceContextHandle, 0x00000000);
-            SetBkMode(deviceContextHandle,TRANSPARENT);
+            SetBkMode(deviceContextHandle,  TRANSPARENT);
             DrawText(deviceContextHandle,
                      "What the hell is this",
                      -1,
                      &textRect,
                      DT_CENTER | DT_SINGLELINE);
-            win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
-            Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
-                                       Dimension.Width, Dimension.Height);
 
             MSG message;
             while(PeekMessage(&message, 0, 0, 0, PM_REMOVE))
             {
                 if(message.message == WM_KEYUP)
                 {
-                    if(message.wParam == 'I')
-                    {
-                        aaSamples++;
-                    }
-
-                    if(message.wParam == VK_ESCAPE)
+                    int VK_CODE = message.wParam;
+                    vec3 currentLightPosition = lightList[0]->position;
+                    if(VK_CODE == VK_ESCAPE)
                     {
                         isRunning = false;
                     }
+                    else if(VK_CODE == VK_LEFT)
+                    {
+                        lightList[0]->position.v[0] = currentLightPosition.x() - 1;
+                    }
+                    else if(VK_CODE == VK_RIGHT)
+                    {
+                        lightList[0]->position.v[0] = currentLightPosition.x() + 1;
+                    }
+                    else if(VK_CODE == VK_UP)
+                    {
+                        lightList[0]->position.v[1] = currentLightPosition.x() + 1;
+                    }
+                    else if(VK_CODE == VK_DOWN)
+                    {
+                        lightList[0]->position.v[1] = currentLightPosition.x() - 1;
+                    }
+                }
+                else if(message.message == WM_KEYUP)
+                {
+                    int i = 0;
                 }
                 TranslateMessage(&message);
                 DispatchMessageA(&message);
@@ -284,21 +302,6 @@ Win32WindowCallback(HWND windowHandle,
             DestroyWindow(windowHandle);
         } break;
 
-        case WM_KEYDOWN:
-        {
-            if(VKCode == 'R')
-            {
-                redOffset += 10;
-            }
-            if(VKCode == 'G')
-            {
-                greenOffset += 10;
-            }
-            if(VKCode == 'B')
-            {
-                blueOffset += 10;
-            }
-        }
         default:
         {
             return DefWindowProc(windowHandle, message, wParam, lParam);
@@ -359,12 +362,11 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     int res[2] = {800, 450};
     renderer.renderResolution[0] = res[0];
     renderer.renderResolution[1] = res[1];
-    renderer.aaSamples = 1;
 
-    Camera * cam = new Camera(vec3(-2, 3, 5), vec3(0, 0, 0),
-                              vec3(0, 1, 0), 50, float(res[0])/res[1], 3.5f);
-    cam -> SetName("Camera1");
-    std::vector<Light> lightList;
+    Camera cam = Camera(vec3(-2, 3, 5), vec3(0, 0, 0),
+                        vec3(0, 1, 0), 50, float(res[0])/res[1], 3.5f);
+    cam.SetName("Camera1");
+    std::vector<Light*> lightList;
 
     Sphere sphr(1);
     sphr.position = vec3(0, 0.5, 1);
@@ -383,8 +385,8 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     lgt2.position = vec3(-2, 5, 0);
     lgt2.color = vec3(1, 0, 0);
 
-    lightList.push_back(lgt1);
-    lightList.push_back(lgt2);
+    lightList.push_back(&lgt1);
+    lightList.push_back(&lgt2);
 
     sceneRoot.AddObject(&sphr);
     sceneRoot.AddObject(&sphr2);
@@ -417,13 +419,12 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
 
         ShowWindow(windowHandle, showCode);
         UpdateWindow(windowHandle);
-        renderer.Render(*cam, lightList, sceneRoot, &backBuffer);
+        renderer.Render(cam, lightList, sceneRoot, &backBuffer);
 
         HDC deviceContextHandle = GetDC(windowHandle);
         win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
         Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
                                    Dimension.Width, Dimension.Height);
-
     }
 
     return 0;
