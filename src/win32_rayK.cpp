@@ -18,7 +18,6 @@
 #include "Ray.cpp"
 #include "Light.cpp"
 #include "Object3d.cpp"
-//#include "Raytracer.cpp"
 #include "Triangle.cpp"
 #include "Lambert.cpp"
 
@@ -32,6 +31,7 @@ typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
 typedef uint64_t uint64;
+
 
 struct win32_offscreen_buffer
 {
@@ -214,51 +214,6 @@ struct Raytracer {
             win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
             Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
                                        Dimension.Width, Dimension.Height);
-            //TODO: make this text show
-            RECT textRect;
-            textRect.right = 300;
-            textRect.left= 100;
-            textRect.top = 100;
-            textRect.bottom = 100;
-            SetTextColor(deviceContextHandle, 0x00000000);
-            SetBkMode(deviceContextHandle,  TRANSPARENT);
-            DrawText(deviceContextHandle,
-                     "What the hell is this",
-                     -1,
-                     &textRect,
-                     DT_CENTER | DT_SINGLELINE);
-
-            MSG message;
-            while(PeekMessage(&message, 0, 0, 0, PM_REMOVE))
-            {
-                if(message.message == WM_KEYUP)
-                {
-                    WPARAM VK_CODE = message.wParam;
-                    vec3 currentLightPosition = lightList[0]->position;
-                    if(VK_CODE == VK_ESCAPE)
-                    {
-                        isRunning = false;
-                    }
-                    else if(VK_CODE == VK_LEFT)
-                    {
-                        lightList[0]->position.v[0] = currentLightPosition.x() - 1;
-                    }
-                    else if(VK_CODE == VK_RIGHT)
-                    {
-                        lightList[0]->position.v[0] = currentLightPosition.x() + 1;
-                    }
-                    else if(VK_CODE == VK_UP)
-                    {
-                        lightList[0]->position.v[1] = currentLightPosition.x() + 1;
-                    }
-                    else if(VK_CODE == VK_DOWN)
-                    {
-                        lightList[0]->position.v[1] = currentLightPosition.x() - 1;
-                    }
-                }
-                TranslateMessage(&message);
-                DispatchMessageA(&message);
-            }
         }
 
         clock_t end = clock();
@@ -396,7 +351,6 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     tri2.pMat = &mat;
     plane.pMat = &mat;
 
-
     while (isRunning)
     {
         MSG message;
@@ -406,7 +360,31 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
             {
                 isRunning = false;
                 PostQuitMessage(0);
-                return 0;
+            }
+            else if(message.message == WM_KEYUP)
+            {
+                WPARAM VK_CODE = message.wParam;
+                vec3 currentLightPosition = lightList[0]->position;
+                if(VK_CODE == VK_ESCAPE)
+                {
+                    isRunning = false;
+                }
+                else if(VK_CODE == VK_LEFT)
+                {
+                    lightList[0]->position.v[0] = currentLightPosition.x() - 1;
+                }
+                else if(VK_CODE == VK_RIGHT)
+                {
+                    lightList[0]->position.v[0] = currentLightPosition.x() + 1;
+                }
+                else if(VK_CODE == VK_UP)
+                {
+                    lightList[0]->position.v[1] = currentLightPosition.y() + 1;
+                }
+                else if(VK_CODE == VK_DOWN)
+                {
+                    lightList[0]->position.v[1] = currentLightPosition.y() - 1;
+                }
             }
             TranslateMessage(&message);
             DispatchMessageA(&message);
