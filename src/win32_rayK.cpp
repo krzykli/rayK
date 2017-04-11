@@ -201,9 +201,9 @@ struct Raytracer {
                     color = Trace(r, lightList, scene, 0);
                 }
 
-                uint8 red = int(color[0] * 255.99);
-                uint8 green = int(color[1] * 255.99);
-                uint8 blue = int(color[2] * 255.99);
+                uint8 red = (uint8)(color[0] * 255.99);
+                uint8 green = (uint8)(color[1] * 255.99);
+                uint8 blue = (uint8)(color[2] * 255.99);
 
                 *Pixel++ = ((red << 16) | (green << 8) | blue);
 
@@ -233,7 +233,7 @@ struct Raytracer {
             {
                 if(message.message == WM_KEYUP)
                 {
-                    int VK_CODE = message.wParam;
+                    WPARAM VK_CODE = message.wParam;
                     vec3 currentLightPosition = lightList[0]->position;
                     if(VK_CODE == VK_ESCAPE)
                     {
@@ -256,10 +256,6 @@ struct Raytracer {
                         lightList[0]->position.v[1] = currentLightPosition.x() - 1;
                     }
                 }
-                else if(message.message == WM_KEYUP)
-                {
-                    int i = 0;
-                }
                 TranslateMessage(&message);
                 DispatchMessageA(&message);
             }
@@ -280,7 +276,6 @@ Win32WindowCallback(HWND windowHandle,
                     LPARAM lParam)
 {
     LRESULT result = 0;
-    WPARAM VKCode = wParam;
 
     switch (message)
     {
