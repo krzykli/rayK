@@ -168,7 +168,7 @@ struct Raytracer {
 
     void Raytracer::Render(
             Camera &cam,
-            std::vector<Light*> & lightList,
+            std::vector<Light*> &lightList,
             Scene &scene,
             win32_offscreen_buffer *Buffer)
     {
@@ -214,6 +214,10 @@ struct Raytracer {
             win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
             Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
                                        Dimension.Width, Dimension.Height);
+            SetBkMode(deviceContextHandle, TRANSPARENT);
+            SetTextColor(deviceContextHandle, 0xFFFFFF);
+            TextOut(deviceContextHandle, 10, 10, TEXT("Debug code"), 10);
+            ReleaseDC(windowHandle, deviceContextHandle);
         }
 
         clock_t end = clock();
@@ -242,7 +246,9 @@ Win32WindowCallback(HWND windowHandle,
             win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
             Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
                                        Dimension.Width, Dimension.Height);
-
+            SetBkMode(deviceContextHandle, TRANSPARENT);
+            SetTextColor(deviceContextHandle, 0xFFFFFF);
+            TextOut(deviceContextHandle, 10, 10, TEXT("Debug code"), 10);
             EndPaint(windowHandle, &paintStruct);
         } break;
 
@@ -351,6 +357,11 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     tri2.pMat = &mat;
     plane.pMat = &mat;
 
+    ShowWindow(windowHandle, showCode);
+    UpdateWindow(windowHandle);
+    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
+    //UpdateWindow(windowHandle);
+
     while (isRunning)
     {
         MSG message;
@@ -372,34 +383,29 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
                 else if(VK_CODE == VK_LEFT)
                 {
                     lightList[0]->position.v[0] = currentLightPosition.x() - 1;
+                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
                 else if(VK_CODE == VK_RIGHT)
                 {
                     lightList[0]->position.v[0] = currentLightPosition.x() + 1;
+                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
                 else if(VK_CODE == VK_UP)
                 {
                     lightList[0]->position.v[1] = currentLightPosition.y() + 1;
+                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
                 else if(VK_CODE == VK_DOWN)
                 {
                     lightList[0]->position.v[1] = currentLightPosition.y() - 1;
+                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
             }
             TranslateMessage(&message);
             DispatchMessageA(&message);
         }
-
-        ShowWindow(windowHandle, showCode);
         UpdateWindow(windowHandle);
-        renderer.Render(cam, lightList, sceneRoot, &backBuffer);
-
-        HDC deviceContextHandle = GetDC(windowHandle);
-        win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
-        Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
-                                   Dimension.Width, Dimension.Height);
     }
-
     return 0;
 }
 
