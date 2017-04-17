@@ -175,7 +175,7 @@ struct Raytracer {
         clock_t begin = clock();
 
         uint32 *Pixel = (uint32 *)Buffer->Memory;
-        for(int i = Buffer->Height; i >=0; --i)
+        for(int i = Buffer->Height; i > 0; --i)
         {
             for(int j = 0; j < Buffer->Width; ++j)
             {
