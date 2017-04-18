@@ -2,19 +2,21 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include "rayK_defines.h"
 
 #include "Camera.h"
-#include "Logger.hpp"
 #include "Sphere.h"
 #include "Scene.h"
 
 struct Raytracer {
-    int renderResolution[2] = {512, 512};
+    int renderResolution[2] = {800, 450};
     int aaSamples = 0;
     int rayDepth = 5;
 
-    vec3 Raytracer::Trace(
-        const Ray& r, std::vector<Light>& lightList, Scene& scene, int depth)
+    vec3 Trace(const Ray& r,
+               std::vector<Light*>& lightList,
+               Scene& scene,
+               int depth)
     {
         vec3 color = vec3(0, 0, 0);
         hit_record rec;
@@ -27,8 +29,8 @@ struct Raytracer {
                 return vec3(0, 0, 0);
             }
 
-            for (std::vector<Light>::iterator it = lightList.begin(); it != lightList.end(); ++it) {
-                Light lgt = *it;
+            for (std::vector<Light*>::iterator it = lightList.begin(); it != lightList.end(); ++it) {
+                Light lgt = **it;
                 vec3 lightPos = lgt.position;
                 float distToLight = (lightPos - rec.p).length();
                 vec3 diffuseColor = rec.pMat->diffuse;
@@ -61,40 +63,30 @@ struct Raytracer {
         }
         float v = 0.5f * (vec3::normalize(r.direction).y() + 1);
         return vec3(v, v, v);
-        vec3 Trace(const Ray &r, std::vector<Light> & lightList, Scene &scene, int depth);
     }
 
-    void Raytracer::Render(
-            Camera & cam,
-            std::vector<Light> & lightList,
-            Scene & scene,
-            const std::string & filename)
+
+    void Render(Camera &cam,
+                std::vector<Light*> &lightList,
+                Scene &scene,
+                win32_offscreen_buffer *Buffer,
+                void (*Win32DisplayBufferCallback)(win32_offscreen_buffer*))
     {
         clock_t begin = clock();
 
-        std::ofstream outputFile;
-        outputFile.open(filename);
-
-        const int bucketSize = 5024;
-        vec3 bufferedPixels[bucketSize];
-        int pixelNumber = 0;
-
-        int width = renderResolution[0];
-        int height = renderResolution[1];
-
-        outputFile << "P3\n" << width << " " << height << "\n255\n";
-
-        for (int j = height - 1; j >= 0; j--) {
-            for (int i = 0; i < width; i++) {
-
+        uint32 *Pixel = (uint32 *)Buffer->Memory;
+        for(int i = Buffer->Height; i > 0; --i)
+        {
+            for(int j = 0; j < Buffer->Width; ++j)
+            {
                 vec3 color = vec3(0, 0, 0);
 
                 if (aaSamples > 1) {
                     for (int s = 0; s < aaSamples; s++)
                     {
                         // pixel centers + jitter
-                        float u = float(i + randf) / float(width);
-                        float v = float(j + randf) / float(height);
+                        float u = float(j + randf) / float(Buffer->Width);
+                        float v = float(i + randf) / float(Buffer->Height);
 
                         Ray r = cam.GetRay(u, v);
                         color += Trace(r, lightList, scene, 0);
@@ -102,39 +94,26 @@ struct Raytracer {
                     color /= float(aaSamples);
                 }
                 else {
-                    float u = float(i) / float(width);
-                    float v = float(j) / float(height);
+                    float u = float(j) / float(Buffer->Width);
+                    float v = float(i) / float(Buffer->Height);
 
                     Ray r = cam.GetRay(u, v);
                     color = Trace(r, lightList, scene, 0);
                 }
 
-                int red = int(color[0] * 255.99);
-                int green = int(color[1] * 255.99);
-                int blue = int(color[2] * 255.99);
+                uint8 red = (uint8)(color[0] * 255.99);
+                uint8 green = (uint8)(color[1] * 255.99);
+                uint8 blue = (uint8)(color[2] * 255.99);
 
-                bufferedPixels[pixelNumber] = vec3(red, green, blue);
-                pixelNumber++;
-
-                if (pixelNumber == bucketSize) {
-                    writeBucketToFile(outputFile, bufferedPixels, bucketSize);
-                    pixelNumber = 0;
-                }
+                *Pixel++ = ((red << 16) | (green << 8) | blue);
             }
-        }
-        // Flush the rest
-        if (pixelNumber != 0) {
-            writeBucketToFile(outputFile, bufferedPixels, pixelNumber);
+
+            Win32DisplayBufferCallback(Buffer);
         }
 
-        outputFile.close();
         clock_t end = clock();
 
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        std::ostringstream oss;
-        oss << "Elapsed time : " << elapsed_secs << "s";
-        debug_log(oss.str());
+        printf("%f", elapsed_secs);
     }
 };
-
-

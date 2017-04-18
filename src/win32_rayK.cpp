@@ -3,6 +3,7 @@
 #define global_variable static
 
 #include <windows.h>
+#include "win32_rayK.h"
 
 #include "stdafx.h"
 #include <iostream>
@@ -15,40 +16,12 @@
 #include "Ray.h"
 #include "Light.h"
 #include "Camera.cpp"
+#include "Raytracer.cpp"
 #include "Scene.cpp"
 #include "Sphere.cpp"
 #include "Object3d.cpp"
 #include "Triangle.cpp"
 #include "Lambert.cpp"
-
-typedef int8_t int8;
-typedef int16_t int16;
-typedef int32_t int32;
-typedef int64_t int64;
-typedef int32 bool32;
-
-typedef uint8_t uint8;
-typedef uint16_t uint16;
-typedef uint32_t uint32;
-typedef uint64_t uint64;
-
-
-struct win32_offscreen_buffer
-{
-    BITMAPINFO Info;
-    void *Memory;
-    int Width;
-    int Height;
-    int Pitch;
-};
-
-
-struct win32_window_dimension
-{
-    int Width;
-    int Height;
-};
-
 
 global_variable win32_offscreen_buffer backBuffer;
 global_variable bool isRunning;
@@ -110,125 +83,18 @@ Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer,
                   DIB_RGB_COLORS, SRCCOPY);
 }
 
-
-struct Raytracer {
-    int renderResolution[2] = {800, 450};
-    int aaSamples = 0;
-    int rayDepth = 5;
-
-    vec3 Trace(const Ray& r,
-               std::vector<Light*>& lightList,
-               Scene& scene,
-               int depth)
-    {
-        vec3 color = vec3(0, 0, 0);
-        hit_record rec;
-
-        if (depth >= rayDepth) {
-            return color;
-        }
-        if (scene.hit(r, 0.00001f, FLT_MAX, rec)) {
-            if (rec.pMat == NULL) {
-                return vec3(0, 0, 0);
-            }
-
-            for (std::vector<Light*>::iterator it = lightList.begin(); it != lightList.end(); ++it) {
-                Light lgt = **it;
-                vec3 lightPos = lgt.position;
-                float distToLight = (lightPos - rec.p).length();
-                vec3 diffuseColor = rec.pMat->diffuse;
-
-                vec3 dirToCamera = -vec3::normalize(r.direction);
-                vec3 dirToLight = vec3::normalize(lightPos - rec.p);
-                vec3 halfVector = vec3::normalize(dirToCamera + dirToLight);
-
-                float specularity = 0.6f;
-                float shininess = 80;
-
-                Ray shadowRay = Ray(rec.p, dirToLight + vec3(0.2f) * vec3(randf, randf, randf));
-                if (scene.hit(shadowRay, 0.00001f, FLT_MAX, rec)) {
-                    color += vec3(0, 0, 0);
-                }
-                else {
-                    vec3 shadingModel = (lgt.intensity / pow(distToLight, lgt.attenuation) *
-                        diffuseColor * (std::max)(vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p)), 0.f) * lgt.color +
-                        specularity * pow((std::max)(vec3::dot(rec.normal, halfVector), 0.f), shininess));
-                    color += shadingModel;
-                }
-
-                Ray bounce;
-                if (rec.pMat->scatter(r, rec, bounce)) {
-                    color += vec3(0.2f) * Trace(bounce, lightList, scene, depth++);
-                }
-            }
-
-            return (vec3::minimum)(color, vec3(1));
-        }
-        float v = 0.5f * (vec3::normalize(r.direction).y() + 1);
-        return vec3(v, v, v);
-    }
-
-
-    void Render(Camera &cam,
-                std::vector<Light*> &lightList,
-                Scene &scene,
-                win32_offscreen_buffer *Buffer)
-    {
-        clock_t begin = clock();
-
-        uint32 *Pixel = (uint32 *)Buffer->Memory;
-        for(int i = Buffer->Height; i > 0; --i)
-        {
-            for(int j = 0; j < Buffer->Width; ++j)
-            {
-                vec3 color = vec3(0, 0, 0);
-
-                if (aaSamples > 1) {
-                    for (int s = 0; s < aaSamples; s++)
-                    {
-                        // pixel centers + jitter
-                        float u = float(j + randf) / float(Buffer->Width);
-                        float v = float(i + randf) / float(Buffer->Height);
-
-                        Ray r = cam.GetRay(u, v);
-                        color += Trace(r, lightList, scene, 0);
-                    }
-                    color /= float(aaSamples);
-                }
-                else {
-                    float u = float(j) / float(Buffer->Width);
-                    float v = float(i) / float(Buffer->Height);
-
-                    Ray r = cam.GetRay(u, v);
-                    color = Trace(r, lightList, scene, 0);
-                }
-
-                uint8 red = (uint8)(color[0] * 255.99);
-                uint8 green = (uint8)(color[1] * 255.99);
-                uint8 blue = (uint8)(color[2] * 255.99);
-
-                *Pixel++ = ((red << 16) | (green << 8) | blue);
-
-            }
-
-            HWND windowHandle = GetActiveWindow();
-            HDC deviceContextHandle = GetDC(windowHandle);
-            win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
-            Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
-                                       Dimension.Width, Dimension.Height);
-            SetBkMode(deviceContextHandle, TRANSPARENT);
-            SetTextColor(deviceContextHandle, 0xFFFFFF);
-            TextOut(deviceContextHandle, 10, 10, TEXT("Debug code"), 10);
-            ReleaseDC(windowHandle, deviceContextHandle);
-        }
-
-        clock_t end = clock();
-
-        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        printf("%f", elapsed_secs);
-    }
-};
-
+void Win32DisplayBufferCallback(win32_offscreen_buffer *Buffer)
+{
+    HWND windowHandle = GetActiveWindow();
+    HDC deviceContextHandle = GetDC(windowHandle);
+    win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
+    Win32DisplayBufferInWindow(Buffer, deviceContextHandle,
+                               Dimension.Width, Dimension.Height);
+    SetBkMode(deviceContextHandle, TRANSPARENT);
+    SetTextColor(deviceContextHandle, 0xFFFFFF);
+    TextOut(deviceContextHandle, 10, 10, TEXT("Debug code"), 10);
+    ReleaseDC(windowHandle, deviceContextHandle);
+}
 
 LRESULT CALLBACK
 Win32WindowCallback(HWND windowHandle,
@@ -361,8 +227,8 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
 
     ShowWindow(windowHandle, showCode);
     UpdateWindow(windowHandle);
-    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
-    //UpdateWindow(windowHandle);
+
+    renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32DisplayBufferCallback);
 
     while (isRunning)
     {
@@ -385,23 +251,20 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
                 else if(VK_CODE == VK_LEFT)
                 {
                     lightList[0]->position.v[0] = currentLightPosition.x() - 1;
-                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
                 else if(VK_CODE == VK_RIGHT)
                 {
                     lightList[0]->position.v[0] = currentLightPosition.x() + 1;
-                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
                 else if(VK_CODE == VK_UP)
                 {
                     lightList[0]->position.v[1] = currentLightPosition.y() + 1;
-                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
                 else if(VK_CODE == VK_DOWN)
                 {
                     lightList[0]->position.v[1] = currentLightPosition.y() - 1;
-                    renderer.Render(cam, lightList, sceneRoot, &backBuffer);
                 }
+                renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32DisplayBufferCallback);
             }
             TranslateMessage(&message);
             DispatchMessageA(&message);
