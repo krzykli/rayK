@@ -16,6 +16,6 @@ REM Wv- - no warnings after compiler version
 
 IF NOT EXIST build mkdir build
 pushd build
-cl %CompilerFlags% ..\src\win32_rayK.cpp gdi32.lib user32.lib /I..\include /link -subsystem:windows /out:rayK.exe
+cl %CompilerFlags% /DDEBUG ..\src\win32_rayK.cpp gdi32.lib user32.lib /I..\include /link -subsystem:windows /out:rayK.exe
 popd
 

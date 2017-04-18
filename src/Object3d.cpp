@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Object3d.h"
 #include <math.h>
-#include "Logger.hpp"
 
 Object3d::Object3d() :
     name("Object"),

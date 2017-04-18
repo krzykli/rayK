@@ -7,16 +7,16 @@
 #include "stdafx.h"
 #include <iostream>
 #include <stdio.h>
+#include <time.h>
 #include <vector>
-#include "vec3.h"
 #include <algorithm>
 
+#include "vec3.h"
+#include "Ray.h"
+#include "Light.h"
 #include "Camera.cpp"
-#include "Logger.hpp"
 #include "Scene.cpp"
 #include "Sphere.cpp"
-#include "Ray.cpp"
-#include "Light.cpp"
 #include "Object3d.cpp"
 #include "Triangle.cpp"
 #include "Lambert.cpp"
@@ -116,8 +116,10 @@ struct Raytracer {
     int aaSamples = 0;
     int rayDepth = 5;
 
-    vec3 Raytracer::Trace(
-        const Ray& r, std::vector<Light*>& lightList, Scene& scene, int depth)
+    vec3 Trace(const Ray& r,
+               std::vector<Light*>& lightList,
+               Scene& scene,
+               int depth)
     {
         vec3 color = vec3(0, 0, 0);
         hit_record rec;
@@ -166,11 +168,11 @@ struct Raytracer {
         return vec3(v, v, v);
     }
 
-    void Raytracer::Render(
-            Camera &cam,
-            std::vector<Light*> &lightList,
-            Scene &scene,
-            win32_offscreen_buffer *Buffer)
+
+    void Render(Camera &cam,
+                std::vector<Light*> &lightList,
+                Scene &scene,
+                win32_offscreen_buffer *Buffer)
     {
         clock_t begin = clock();
 
@@ -276,6 +278,7 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
     windowClass.lpfnWndProc = Win32WindowCallback;
     windowClass.hInstance = windowInstance;
+    windowClass.hIcon = LoadIcon(windowInstance, MAKEINTRESOURCE(IDI_APPLICATION));
     windowClass.lpszClassName = "rayKWindowClass";
 
     if (!RegisterClassA(&windowClass))
@@ -311,7 +314,6 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     Win32InitBuffer(&backBuffer, 800, 450);
 
     // Prepare the scene
-    debug_log("Start");
     Scene sceneRoot = Scene();
 
     Raytracer renderer = Raytracer();

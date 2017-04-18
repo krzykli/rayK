@@ -10,9 +10,14 @@ struct Ray
 
     Ray() {}
 
-    Ray(const vec3& origin, const vec3 & direction);
+    Ray(const vec3& origin, const vec3& direction):
+        origin(origin),
+        direction(direction)
+    {}
 
-    vec3 PointAtDistance(float t) const;
+    vec3 PointAtDistance(float t) const {
+        return origin + t * direction;
+    }
 
 };
 
