@@ -4,7 +4,7 @@
 #define M_PI 3.14159265358979323846f  /* pi */
 
 
-vec3 randoin_unit_disc() {
+vec3 random_in_unit_disc() {
     vec3 p;
     do {
         p = vec3(2.0) * vec3(randf, randf, 0) - vec3(1, 1, 0);
@@ -39,7 +39,7 @@ Camera::Camera(const vec3 & pos, const vec3 & lookAt, const vec3 & upV,
 Ray Camera::GetRay(float s, float t) const
 {
     // aperature
-    vec3 rd = vec3(this->aperature) * randoin_unit_disc();
+    vec3 rd = vec3(this->aperature) * random_in_unit_disc();
     vec3 offset = u * rd.x() + v * rd.y();
     return Ray(position + offset, topLeftCorner + s * horizontalVector +
                t * verticalVector - position - offset);

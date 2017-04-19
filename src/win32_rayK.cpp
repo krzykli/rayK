@@ -83,17 +83,14 @@ Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer,
                   DIB_RGB_COLORS, SRCCOPY);
 }
 
-void Win32DisplayBufferCallback(win32_offscreen_buffer *Buffer)
+
+void Win32UpdateWindowCallback()
 {
     HWND windowHandle = GetActiveWindow();
-    HDC deviceContextHandle = GetDC(windowHandle);
-    win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
-    Win32DisplayBufferInWindow(Buffer, deviceContextHandle,
-                               Dimension.Width, Dimension.Height);
-    SetBkMode(deviceContextHandle, TRANSPARENT);
-    SetTextColor(deviceContextHandle, 0xFFFFFF);
-    TextOut(deviceContextHandle, 10, 10, TEXT("Debug code"), 10);
-    ReleaseDC(windowHandle, deviceContextHandle);
+    RECT ClientRect;
+    GetClientRect(windowHandle, &ClientRect);
+    InvalidateRect(windowHandle, &ClientRect, true);
+    UpdateWindow(windowHandle);
 }
 
 LRESULT CALLBACK
@@ -156,12 +153,16 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
         return 1;
     }
 
+    int res[2] = {400, 400};
+
     HWND windowHandle = CreateWindow(
         windowClass.lpszClassName,
         "rayK",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        CW_USEDEFAULT, CW_USEDEFAULT,
+        // TODO(KK): check why windows won't draw this correctly without
+        // enlarging the region
+        int(res[0] * 1.2), int(res[1] * 1.2),
         NULL,
         NULL,
         windowInstance,
@@ -177,13 +178,11 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     }
 
     isRunning = true;
-    Win32InitBuffer(&backBuffer, 800, 450);
+    Raytracer renderer = Raytracer();
+    Win32InitBuffer(&backBuffer, res[0], res[1]);
 
     // Prepare the scene
     Scene sceneRoot = Scene();
-
-    Raytracer renderer = Raytracer();
-    int res[2] = {800, 450};
     renderer.renderResolution[0] = res[0];
     renderer.renderResolution[1] = res[1];
 
@@ -228,7 +227,7 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     ShowWindow(windowHandle, showCode);
     UpdateWindow(windowHandle);
 
-    renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32DisplayBufferCallback);
+    renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
 
     while (isRunning)
     {
@@ -264,12 +263,11 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
                 {
                     lightList[0]->position.v[1] = currentLightPosition.y() - 1;
                 }
-                renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32DisplayBufferCallback);
+                renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
             }
             TranslateMessage(&message);
             DispatchMessageA(&message);
         }
-        UpdateWindow(windowHandle);
     }
     return 0;
 }

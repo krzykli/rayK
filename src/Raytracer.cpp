@@ -2,14 +2,14 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "rayK_defines.h"
 
+#include "rayK_defines.h"
 #include "Camera.h"
 #include "Sphere.h"
 #include "Scene.h"
 
 struct Raytracer {
-    int renderResolution[2] = {800, 450};
+    int renderResolution[2];
     int aaSamples = 0;
     int rayDepth = 5;
 
@@ -70,7 +70,7 @@ struct Raytracer {
                 std::vector<Light*> &lightList,
                 Scene &scene,
                 win32_offscreen_buffer *Buffer,
-                void (*Win32DisplayBufferCallback)(win32_offscreen_buffer*))
+                void (*UpdateWindowCallback)(void))
     {
         clock_t begin = clock();
 
@@ -108,7 +108,7 @@ struct Raytracer {
                 *Pixel++ = ((red << 16) | (green << 8) | blue);
             }
 
-            Win32DisplayBufferCallback(Buffer);
+            UpdateWindowCallback();
         }
 
         clock_t end = clock();
