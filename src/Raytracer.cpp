@@ -74,9 +74,10 @@ struct Raytracer {
     {
         clock_t begin = clock();
 
-        uint32 *Pixel = (uint32 *)Buffer->Memory;
+        uint8 *Row = (uint8 *)Buffer->Memory;
         for(int i = Buffer->Height; i > 0; --i)
         {
+            uint32 *Pixel = (uint32 *)Row;
             for(int j = 0; j < Buffer->Width; ++j)
             {
                 vec3 color = vec3(0, 0, 0);
@@ -107,7 +108,7 @@ struct Raytracer {
 
                 *Pixel++ = ((red << 16) | (green << 8) | blue);
             }
-
+            Row += Buffer->Pitch;
             UpdateWindowCallback();
         }
 
