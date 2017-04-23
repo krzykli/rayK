@@ -21,13 +21,27 @@ bool Scene::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) con
     return hit_anything;
 }
 
+
 size_t Scene::GetChildrenNumber() const
 {
     return sizeof(flatObjList) / sizeof(flatObjList[0]);
 }
 
+
+size_t Scene::GetLightsNumber() const
+{
+    return sizeof(lightList) / sizeof(lightList[0]);
+}
+
+
 void Scene::AddObject(void *obj, int index)
 {
     objNumber++;
     flatObjList[index] = obj;
+}
+
+void Scene::AddLight(Light *obj, int index)
+{
+    lightNumber++;
+    lightList[index] = obj;
 }

@@ -188,7 +188,6 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
 
     Camera cam = Camera(vec3(-2, 3, 5), vec3(0, 0, 0),
                         vec3(0, 1, 0), 50, float(res[0])/res[1], 3.5f);
-    std::vector<Light*> lightList;
 
     Sphere sphr(1);
     sphr.position = vec3(0, 0.5, 1);
@@ -207,8 +206,8 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     lgt2.position = vec3(-2, 5, 0);
     lgt2.color = vec3(1, 0, 0);
 
-    lightList.push_back(&lgt1);
-    lightList.push_back(&lgt2);
+    sceneRoot.AddLight(&lgt1, 0);
+    sceneRoot.AddLight(&lgt2, 1);
 
     sceneRoot.AddObject(&sphr, 0);
     sceneRoot.AddObject(&sphr2, 1);
@@ -226,7 +225,7 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     ShowWindow(windowHandle, showCode);
     UpdateWindow(windowHandle);
 
-    renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
+    renderer.Render(cam, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
 
     while (isRunning)
     {
@@ -241,28 +240,28 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
             else if(message.message == WM_KEYUP)
             {
                 WPARAM VK_CODE = message.wParam;
-                vec3 currentLightPosition = lightList[0]->position;
+                vec3 currentLightPosition = sceneRoot.lightList[0]->position;
                 if(VK_CODE == VK_ESCAPE)
                 {
                     isRunning = false;
                 }
                 else if(VK_CODE == VK_LEFT)
                 {
-                    lightList[0]->position.v[0] = currentLightPosition.x() - 1;
+                    sceneRoot.lightList[0]->position.v[0] = currentLightPosition.x() - 1;
                 }
                 else if(VK_CODE == VK_RIGHT)
                 {
-                    lightList[0]->position.v[0] = currentLightPosition.x() + 1;
+                    sceneRoot.lightList[0]->position.v[0] = currentLightPosition.x() + 1;
                 }
                 else if(VK_CODE == VK_UP)
                 {
-                    lightList[0]->position.v[1] = currentLightPosition.y() + 1;
+                    sceneRoot.lightList[0]->position.v[1] = currentLightPosition.y() + 1;
                 }
                 else if(VK_CODE == VK_DOWN)
                 {
-                    lightList[0]->position.v[1] = currentLightPosition.y() - 1;
+                    sceneRoot.lightList[0]->position.v[1] = currentLightPosition.y() - 1;
                 }
-                renderer.Render(cam, lightList, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
+                renderer.Render(cam, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
             }
             TranslateMessage(&message);
             DispatchMessageA(&message);

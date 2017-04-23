@@ -15,7 +15,6 @@ struct Material
     vec3 emission;
 
     virtual bool scatter(const Ray& ray, const hit_record& rec, Ray & bounce) const = 0;
-
 };
 
 #endif // MATERIALH

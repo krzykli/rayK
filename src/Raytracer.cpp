@@ -14,7 +14,6 @@ struct Raytracer {
     int rayDepth = 5;
 
     vec3 Trace(const Ray& r,
-               std::vector<Light*>& lightList,
                Scene& scene,
                int depth)
     {
@@ -29,9 +28,9 @@ struct Raytracer {
                 return vec3(0, 0, 0);
             }
 
-            for (std::vector<Light*>::iterator it = lightList.begin(); it != lightList.end(); ++it) {
-                Light lgt = **it;
-                vec3 lightPos = lgt.position;
+            for (size_t i = 0; i < scene.lightNumber; i++) {
+                Light* lgt = scene.lightList[i];
+                vec3 lightPos = lgt->position;
                 float distToLight = (lightPos - rec.p).length();
                 vec3 diffuseColor = rec.pMat->diffuse;
 
@@ -47,15 +46,15 @@ struct Raytracer {
                     color += vec3(0, 0, 0);
                 }
                 else {
-                    vec3 shadingModel = (lgt.intensity / pow(distToLight, lgt.attenuation) *
-                        diffuseColor * (std::max)(vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p)), 0.f) * lgt.color +
+                    vec3 shadingModel = (lgt->intensity / pow(distToLight, lgt->attenuation) *
+                        diffuseColor * (std::max)(vec3::dot(rec.normal, vec3::normalize(lightPos - rec.p)), 0.f) * lgt->color +
                         specularity * pow((std::max)(vec3::dot(rec.normal, halfVector), 0.f), shininess));
                     color += shadingModel;
                 }
 
                 Ray bounce;
                 if (rec.pMat->scatter(r, rec, bounce)) {
-                    color += vec3(0.2f) * Trace(bounce, lightList, scene, depth++);
+                    color += vec3(0.2f) * Trace(bounce, scene, depth++);
                 }
             }
 
@@ -67,7 +66,6 @@ struct Raytracer {
 
 
     void Render(Camera &cam,
-                std::vector<Light*> &lightList,
                 Scene &scene,
                 win32_offscreen_buffer *Buffer,
                 void (*UpdateWindowCallback)(void))
@@ -90,7 +88,7 @@ struct Raytracer {
                         float v = float(i + randf) / float(Buffer->Height);
 
                         Ray r = cam.GetRay(u, v);
-                        color += Trace(r, lightList, scene, 0);
+                        color += Trace(r, scene, 0);
                     }
                     color /= float(aaSamples);
                 }
@@ -99,7 +97,7 @@ struct Raytracer {
                     float v = float(i) / float(Buffer->Height);
 
                     Ray r = cam.GetRay(u, v);
-                    color = Trace(r, lightList, scene, 0);
+                    color = Trace(r, scene, 0);
                 }
 
                 uint8 red = (uint8)(color[0] * 255.99);
