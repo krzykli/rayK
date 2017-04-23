@@ -2,10 +2,9 @@
 #define CAMERAH
 
 #include "vec3.h"
-#include "Object3d.h"
 #include "Ray.h"
 
-struct Camera : public Object3d
+struct Camera
 {
     vec3 u, v, w;
     vec3 position;

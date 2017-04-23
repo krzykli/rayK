@@ -19,7 +19,6 @@
 #include "Raytracer.cpp"
 #include "Scene.cpp"
 #include "Sphere.cpp"
-#include "Object3d.cpp"
 #include "Triangle.cpp"
 #include "Lambert.cpp"
 
@@ -92,6 +91,7 @@ void Win32UpdateWindowCallback()
     InvalidateRect(windowHandle, &ClientRect, true);
     UpdateWindow(windowHandle);
 }
+
 
 LRESULT CALLBACK
 Win32WindowCallback(HWND windowHandle,
@@ -179,16 +179,15 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
 
     isRunning = true;
     Raytracer renderer = Raytracer();
+    renderer.renderResolution[0] = res[0];
+    renderer.renderResolution[1] = res[1];
     Win32InitBuffer(&backBuffer, res[0], res[1]);
 
     // Prepare the scene
     Scene sceneRoot = Scene();
-    renderer.renderResolution[0] = res[0];
-    renderer.renderResolution[1] = res[1];
 
     Camera cam = Camera(vec3(-2, 3, 5), vec3(0, 0, 0),
                         vec3(0, 1, 0), 50, float(res[0])/res[1], 3.5f);
-    cam.SetName("Camera1");
     std::vector<Light*> lightList;
 
     Sphere sphr(1);
@@ -211,11 +210,11 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     lightList.push_back(&lgt1);
     lightList.push_back(&lgt2);
 
-    sceneRoot.AddObject(&sphr);
-    sceneRoot.AddObject(&sphr2);
-    sceneRoot.AddObject(&tri);
-    sceneRoot.AddObject(&tri2);
-    sceneRoot.AddObject(&plane);
+    sceneRoot.AddObject(&sphr, 0);
+    sceneRoot.AddObject(&sphr2, 1);
+    sceneRoot.AddObject(&tri, 2);
+    sceneRoot.AddObject(&tri2, 3);
+    sceneRoot.AddObject(&plane, 4);
 
     Lambert mat = Lambert();
     sphr.pMat = &mat;

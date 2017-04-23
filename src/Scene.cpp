@@ -8,7 +8,7 @@ bool Scene::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) con
     float closest_so_far = t_max;
     for (int i = 0; i < GetChildrenNumber(); i++)
     {
-        if (IHitable * hitable = dynamic_cast<IHitable *>(flatObjList[i]))
+        if (IHitable * hitable = (IHitable *)(flatObjList[i]))
         {
             if (hitable->hit(ray, t_min, closest_so_far, temp_rec))
             {
@@ -23,11 +23,11 @@ bool Scene::hit(const Ray & ray, float t_min, float t_max, hit_record & rec) con
 
 size_t Scene::GetChildrenNumber() const
 {
-    return flatObjList.size();
+    return sizeof(flatObjList) / sizeof(flatObjList[0]);
 }
 
-void Scene::AddObject(Object3d * obj)
+void Scene::AddObject(void *obj, int index)
 {
     objNumber++;
-    flatObjList.push_back(obj);
+    flatObjList[index] = obj;
 }

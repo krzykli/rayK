@@ -1,22 +1,18 @@
 #pragma once
 #include "stdafx.h"
-#include "Object3d.h"
 #include "IHitable.h"
 #include <vector>
 
-class Scene : public IHitable
+struct Scene : public IHitable
 {
-public:
-    Scene() {};
+    unsigned int objNumber;
+    void* flatObjList[100]; // hardcore this for now
 
     virtual bool hit(const Ray & ray, float t_min, float t_max, hit_record & rec) const;
 
     size_t GetChildrenNumber() const;
 
-    void AddObject(Object3d * obj);
+    void AddObject(void* obj, int index);
 
-private:
-    unsigned int objNumber;
-    std::vector<Object3d *> flatObjList;
 };
 

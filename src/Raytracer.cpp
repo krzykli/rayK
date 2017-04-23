@@ -114,7 +114,7 @@ struct Raytracer {
 
         clock_t end = clock();
 
-        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        float elapsed_secs = float(end - begin) / CLOCKS_PER_SEC;
         printf("%f", elapsed_secs);
     }
 };
