@@ -25,12 +25,8 @@
 global_variable win32_offscreen_buffer backBuffer;
 global_variable bool isRunning;
 
-global_variable int redOffset = 0;
-global_variable int greenOffset = 0;
-global_variable int blueOffset = 0;
-
 global_variable renderStats stats;
-global_variable bool showStats = 0;
+global_variable bool showStats;
 
 #ifndef RGBA
 #define RGBA(r,g,b,a)        ((COLORREF)( (((DWORD)(BYTE)(a))<<24) |     RGB(r,g,b) ))
