@@ -274,7 +274,7 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
                 {
                     isRunning = false;
                 }
-                else if(VK_CODE == 0x51) // Q
+                else if(VK_CODE == 'Q')
                 {
                     showStats = !showStats;
                     Win32UpdateWindowCallback();
