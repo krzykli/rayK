@@ -5,6 +5,6 @@ Using [Ray Tracing in One Weekend](http://in1weekend.blogspot.com.au/2016/01/ray
 
 Current state:
 
-![alt tag](https://cloud.githubusercontent.com/assets/6304331/23851396/7d7de934-0837-11e7-856b-91124ec988fe.jpg)
+![alt tag](https://cloud.githubusercontent.com/assets/6304331/25363006/df31763a-299a-11e7-9bff-4aca89ef5a45.png)
 
-Image render time:  23.664s, single-threaded, no optimizations
+Image render time:  1.92s, single-threaded, compiler optimizations off
