@@ -29,6 +29,12 @@ global_variable int redOffset = 0;
 global_variable int greenOffset = 0;
 global_variable int blueOffset = 0;
 
+global_variable renderStats stats;
+global_variable bool showStats = 0;
+
+#ifndef RGBA
+#define RGBA(r,g,b,a)        ((COLORREF)( (((DWORD)(BYTE)(a))<<24) |     RGB(r,g,b) ))
+#endif
 
 static void
 Win32InitBuffer(win32_offscreen_buffer *buffer, int width, int height)
@@ -111,9 +117,26 @@ Win32WindowCallback(HWND windowHandle,
             win32_window_dimension Dimension = Win32GetWindowDimension(windowHandle);
             Win32DisplayBufferInWindow(&backBuffer, deviceContextHandle,
                                        Dimension.Width, Dimension.Height);
-            SetBkMode(deviceContextHandle, TRANSPARENT);
-            SetTextColor(deviceContextHandle, 0xFFFFFF);
-            TextOut(deviceContextHandle, 10, 10, TEXT("Debug code"), 10);
+            if (showStats) {
+                HBRUSH brushHandle;
+                brushHandle = CreateSolidBrush(RGB(30, 30, 30));
+
+                RECT textArea;
+                textArea.left = 0;
+                textArea.top = Dimension.Height - 50;
+                textArea.right = Dimension.Width;
+                textArea.bottom= Dimension.Height;
+
+                SetBkMode(deviceContextHandle, TRANSPARENT);
+                SetTextColor(deviceContextHandle, 0x11EE00);
+                FillRect(deviceContextHandle, &textArea, brushHandle);
+                const int msgLen = 35;
+                char buffer[msgLen];
+                sprintf_s(buffer, "Time elapsed %.4fs\nAA Samples %i", stats.renderTime, stats.aaSamples);
+
+                DrawText(deviceContextHandle, buffer, -1, &textArea, DT_LEFT);
+                DeleteObject(brushHandle);
+            }
             EndPaint(windowHandle, &paintStruct);
         } break;
 
@@ -181,13 +204,19 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     Raytracer renderer = Raytracer();
     renderer.renderResolution[0] = res[0];
     renderer.renderResolution[1] = res[1];
+
+    stats.resolution[0] = res[0];
+    stats.resolution[1] = res[1];
+    stats.aaSamples = renderer.aaSamples;
+
+    //renderer.aaSamples = 16;
     Win32InitBuffer(&backBuffer, res[0], res[1]);
 
     // Prepare the scene
     Scene sceneRoot = Scene();
 
     Camera cam = Camera(vec3(-2, 3, 5), vec3(0, 0, 0),
-                        vec3(0, 1, 0), 50, float(res[0])/res[1], 3.5f);
+                        vec3(0, 1, 0), 50, float(res[0])/res[1], 3.8f);
 
     Sphere sphr(1);
     sphr.position = vec3(0, 0.5, 1);
@@ -225,7 +254,7 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
     ShowWindow(windowHandle, showCode);
     UpdateWindow(windowHandle);
 
-    renderer.Render(cam, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
+    renderer.Render(cam, sceneRoot, &backBuffer, stats, Win32UpdateWindowCallback);
 
     while (isRunning)
     {
@@ -245,23 +274,31 @@ int CALLBACK WinMain(HINSTANCE windowInstance,
                 {
                     isRunning = false;
                 }
+                else if(VK_CODE == 0x51) // Q
+                {
+                    showStats = !showStats;
+                    Win32UpdateWindowCallback();
+                }
                 else if(VK_CODE == VK_LEFT)
                 {
                     sceneRoot.lightList[0]->position.v[0] = currentLightPosition.x() - 1;
+                    renderer.Render(cam, sceneRoot, &backBuffer, stats, Win32UpdateWindowCallback);
                 }
                 else if(VK_CODE == VK_RIGHT)
                 {
                     sceneRoot.lightList[0]->position.v[0] = currentLightPosition.x() + 1;
+                    renderer.Render(cam, sceneRoot, &backBuffer, stats, Win32UpdateWindowCallback);
                 }
                 else if(VK_CODE == VK_UP)
                 {
                     sceneRoot.lightList[0]->position.v[1] = currentLightPosition.y() + 1;
+                    renderer.Render(cam, sceneRoot, &backBuffer, stats, Win32UpdateWindowCallback);
                 }
                 else if(VK_CODE == VK_DOWN)
                 {
                     sceneRoot.lightList[0]->position.v[1] = currentLightPosition.y() - 1;
+                    renderer.Render(cam, sceneRoot, &backBuffer, stats, Win32UpdateWindowCallback);
                 }
-                renderer.Render(cam, sceneRoot, &backBuffer, Win32UpdateWindowCallback);
             }
             TranslateMessage(&message);
             DispatchMessageA(&message);

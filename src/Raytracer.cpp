@@ -8,6 +8,14 @@
 #include "Sphere.h"
 #include "Scene.h"
 
+
+struct renderStats{
+    float renderTime;
+    int aaSamples;
+    int resolution[2];
+};
+
+
 struct Raytracer {
     int renderResolution[2];
     int aaSamples = 0;
@@ -68,6 +76,7 @@ struct Raytracer {
     void Render(Camera &cam,
                 Scene &scene,
                 win32_offscreen_buffer *Buffer,
+                renderStats &stats,
                 void (*UpdateWindowCallback)(void))
     {
         clock_t begin = clock();
@@ -111,8 +120,12 @@ struct Raytracer {
         }
 
         clock_t end = clock();
-
         float elapsed_secs = float(end - begin) / CLOCKS_PER_SEC;
-        printf("%f", elapsed_secs);
+        stats.renderTime = elapsed_secs;
+        char buffer[25];
+        sprintf_s(buffer, "Time elapsed %f\ns", elapsed_secs);
+        OutputDebugStringA(buffer);
+
+        UpdateWindowCallback();
     }
 };
